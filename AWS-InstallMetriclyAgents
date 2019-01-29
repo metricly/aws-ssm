@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "2.2",
+  "description": "Installs Metricly Agent.",
+  "parameters": {
+    "LINUXAPIKEY": {
+      "type": "String",
+      "default": "[Your Linux Integration APIKEY",
+      "description": "(Required) Please Contact Support if unsure where to obtain."
+    },
+    "WINDOWSAPIKEY": {
+      "type": "String",
+      "default": "[Your Windows Integration APIKEY]",
+      "description": "(Required) Please Contact Support if unsure where to obtain."
+    },
+    "workingDirectory": {
+      "type": "String",
+      "default": "/tmp",
+      "description": "(Optional) The path to the working directory on your instance.",
+      "maxChars": 4096
+    }
+  },
+  "mainSteps": [
+    {
+      "action": "aws:runShellScript",
+      "name": "install_agent",
+      "precondition": {
+        "StringEquals": [
+          "platformType",
+          "Linux"
+        ]
+      },
+      "inputs": {
+        "runCommand": [
+          "curl -o linux.sh http://repos.app.netuitive.com/linux.sh",
+          "chmod +x linux.sh",
+          "export N_APIKEY={{ LINUXAPIKEY }}",
+          "sudo -E ./linux.sh"
+        ],
+        "timeoutSeconds": "3600"
+      }
+    },
+    {
+      "action": "aws:runPowerShellScript",
+      "name": "install_collectd",
+      "precondition": {
+        "StringEquals": [
+          "platformType",
+          "Windows"
+        ]
+      },
+      "inputs": {
+        "runCommand": [
+          "Start-Process -FilePath 'msiexec.exe' -ArgumentList '/quiet /package https://repos.app.netuitive.com/windows-agent/75/X64/Release/CollectdWin-x64.msi NETUITIVE_API_KEY={{ WINDOWSAPIKEY }}'",
+          "Start-Service 'CollectdWinService (64 bit)'"
+        ],
+        "timeoutSeconds": "3600"
+      }
+    }
+  ]
+}
