@@ -4,7 +4,7 @@
   "parameters": {
     "LINUXAPIKEY": {
       "type": "String",
-      "default": "[Your Linux Integration APIKEY",
+      "default": "[Your Linux Integration APIKEY]",
       "description": "(Required) Please Contact Support if unsure where to obtain."
     },
     "WINDOWSAPIKEY": {
@@ -50,7 +50,7 @@
       },
       "inputs": {
         "runCommand": [
-          "Start-Process -FilePath 'msiexec.exe' -ArgumentList '/quiet /package https://repos.app.netuitive.com/windows-agent/75/X64/Release/CollectdWin-x64.msi NETUITIVE_API_KEY={{ WINDOWSAPIKEY }}'",
+          "Start-Process -Wait -FilePath 'msiexec.exe' -ArgumentList '/quiet /package https://repos.app.netuitive.com/windows-agent/75/X64/Release/CollectdWin-x64.msi NETUITIVE_API_KEY={{ WINDOWSAPIKEY }}'",
           "Start-Service 'CollectdWinService (64 bit)'"
         ],
         "timeoutSeconds": "3600"
